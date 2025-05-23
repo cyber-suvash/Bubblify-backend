@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Product</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 600px;">
+      <div class="card-header">
+        <h4>Edit Product</h4>
+      </div>
+      <div class="card-body">
+        <form action="/api/products/<%= product.id %>?_method=PUT" method="post">
+          <div class="mb-3">
+            <label for="product_name" class="form-label">Product Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="product_name"
+              name="product_name"
+              value="<%= product.product_name %>"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input
+              type="text"
+              class="form-control"
+              id="category"
+              name="category"
+              value="<%= product.category %>"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input
+              type="number"
+              class="form-control"
+              id="price"
+              name="price"
+              value="<%= product.price %>"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="3"
+              required
+            ><%= product.description %></textarea>
+          </div>
+          <div class="d-flex justify-content-between">
+            <a href="/api/products" class="btn btn-secondary">Cancel</a>
+
+            <form action="/api/products/<%= product._id %>?_method=PUT" method="post">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+            
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
