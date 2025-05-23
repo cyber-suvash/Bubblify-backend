@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const register = async (req, res) => {
   try {
     const recData = req.body;
-    const { fullname, email, password } = req.body;
+    const { fullname, email, password,isAdmin,phone } = req.body;
     console.log(recData);
     const userExists = await usermodel.findOne({ email });
     if (userExists) {
@@ -17,6 +17,8 @@ const register = async (req, res) => {
       fullname,
       email,
       password: hash_pass,
+      phone,
+      isAdmin
     });
     res.status(201).json({ msg: "User register successfull" });
   } catch (error) {
