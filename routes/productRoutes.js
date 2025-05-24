@@ -6,15 +6,16 @@ const {
   editProduct,
   deleteProduct,
   openForm,
-  openEdit
+  openEdit,
 } = require("../controllers/product-controller");
 
-router.get("/products/create", openForm);
-router.get("/products", getProducts);
-router.get("/products/:id/edit",openEdit);
-router.post("/products/create", createProduct);
-router.put('/products/:id',editProduct);
-router.delete("/products/:id", deleteProduct);
 
+
+router.put("/:id", editProduct); // PUT  /api/products/:id
+router.get("/", getProducts);   // GET   /api/products
+router.get("/create", openForm); // GET  /api/products/create
+router.post("/create", createProduct); //POST  /api/products/create
+router.get("/:id/edit", openEdit);      //GET /api/products/:id/edit
+router.delete("/:id", deleteProduct);   // DELETE 	/api/products/:id
 
 module.exports = router;

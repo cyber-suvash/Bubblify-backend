@@ -8,19 +8,21 @@ const getProducts = async (req, res) => {
         .status(404)
         .render("errProduct.ejs", { message: "No products available." });
     }
-    res.render("home.ejs", { allProducts });
+
+    res.json({msg:"success fetch",allProducts})
+    // res.render("home.ejs", { allProducts });
   } catch (error) {
     res.status(500).render("error.ejs", { message: "Internal server error" });
   }
 };
 const createProduct = async (req, res) => {
   try {
-    const newProduct=req.body;
-    if(!newProduct===''){
-      const n = await Product.create(newProduct);
+    const {product_name,category,price,description}=req.body;
+      const n = await Product.create({product_name,category,price,description});
       // newProduct is already saved—no need for newProduct.save()
-      return res.status(201).redirect("/api/products");
-    }
+      res.status(201).json({msg:'product save success'})
+
+    //   return res.status(201).redirect("/api/products");
   } catch (err) {
     console.error(err);
     return res.status(500).render("error.ejs", {
@@ -72,7 +74,8 @@ const deleteProduct = async (req, res) => {
         message: "Product not found, cannot delete",
       });
     }
-    res.redirect('/api/products')
+    res.status(200).json({msg:'Successfully deleted'})
+    // res.redirect('/api/products')
   } catch (error) {
     res.status(500).json({
       success: false,
