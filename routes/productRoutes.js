@@ -10,7 +10,6 @@ const {
 } = require("../controllers/product-controller");
 
 
-
 router.put("/:id", editProduct); // PUT  /api/products/:id
 router.get("/", getProducts);   // GET   /api/products
 router.get("/create", openForm); // GET  /api/products/create
