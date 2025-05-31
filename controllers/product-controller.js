@@ -8,7 +8,7 @@ const getProducts = async (req, res) => {
         .status(404)
         .render("errProduct.ejs", { message: "No products available." });
     }
-    res.json({msg:"fetch successful",allProducts})
+    res.send({data:allProducts})
     // res.render("home.ejs", { allProducts });
   } catch (error) {
     res.status(500).render("error.ejs", { message: "Internal server error" });
@@ -17,10 +17,10 @@ const getProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const {product_name,category,price,description}=req.body;
-      const n = await Product.create({product_name,category,price,description});
+    const {product_name,category,price,description,availability,image,rating}=req.body;
+      const n = await Product.create({product_name,category,price,description,availability,image,rating});
       // newProduct is already saved—no need for newProduct.save()
-      res.status(201).json({msg:'product save success'})
+      res.status(201).json({msg:'product save successfully!'})
     //   return res.status(201).redirect("/api/products");
   } catch (err) {
     console.error(err);
@@ -34,8 +34,8 @@ const createProduct = async (req, res) => {
 const editProduct= async(req,res)=>{
   try{
     const {id}=req.params;
-    const {product_name,category,price,description}=req.body;
-    const updatedProduct= await Product.findByIdAndUpdate(id,{product_name,category,price,description},{runValidators:true,new:true})
+    const {product_name,category,price,description,availability,image,rating}=req.body;
+    const updatedProduct= await Product.findByIdAndUpdate(id,{product_name,category,price,description,availability,image,rating},{runValidators:true,new:true})
     console.log(updatedProduct)
     res.json({msg:'Changes successful'})
     // res.redirect('/api/products')

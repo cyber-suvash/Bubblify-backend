@@ -18,6 +18,16 @@ const ProductSchema = new Schema({
     type: String,
     require: true,
   },
+  availability: {
+    type: Number,
+    require:true
+  },
+  image: {
+    type: String,
+  },
+  rating: {
+    type: Number,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
