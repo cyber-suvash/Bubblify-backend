@@ -20,14 +20,17 @@ const ProductSchema = new Schema({
   },
   availability: {
     type: Number,
-    require:true
+    require: true,
   },
   image: {
     type: String,
   },
-  rating: {
-    type: Number,
-  },
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

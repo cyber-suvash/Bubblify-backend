@@ -1,5 +1,5 @@
 const express=require('express');
-const {uploadImage,getImagesByUser} = require('../controllers/image-controller');
+const {uploadImage,getImagesByUser} = require('../controllers/image.controller');
 const router=express.Router();
 const multer=require('multer');
 const path=require('path')
