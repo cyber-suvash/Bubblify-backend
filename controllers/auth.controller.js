@@ -57,6 +57,8 @@ const login = async (req, res) => {
     );
    res.cookie("token",token,{
     httpOnly:true,
+    secure:true,
+    sameSite:"None",
     maxAge:20*60*60*1000,
    })
 
@@ -80,12 +82,15 @@ const getProfile = async (req, res) => {
 };
 
 // logout
-const Logout=async(req,res)=>{
-res.clearCookie("token"),{
-  httpOnly:true,
-  secure:false,
-}
-res.status(200).send("Logged out Successfully")
-}
+const Logout = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false, // ✅ use true in production with HTTPS
+    sameSite: "Strict", // optional, helps with CSRF
+  });
+  
+  res.status(200).json({ msg: "Logged out successfully" });
+};
+
 
 module.exports = { register, login, getProfile ,Logout};
