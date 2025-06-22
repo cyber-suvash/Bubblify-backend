@@ -1,12 +1,13 @@
 const usermodel = require("../models/registerModel");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // *---------------------
 // register
 const register = async (req, res) => {
   try {
     const recData = req.body;
-    const { fullname, email, password,isAdmin,phone } = req.body;
+    const {fullname, email, password, role, phone } = req.body;
     console.log(recData);
     const userExists = await usermodel.findOne({ email });
     if (userExists) {
@@ -18,7 +19,7 @@ const register = async (req, res) => {
       email,
       password: hash_pass,
       phone,
-      isAdmin
+      role,
     });
     res.status(201).json({ msg: "User register successfull" });
   } catch (error) {
@@ -42,20 +43,49 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid password" });
     }
+    const token = jwt.sign(
+      {
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role,
+        _id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "20h",
+      }
+    );
+   res.cookie("token",token,{
+    httpOnly:true,
+    maxAge:20*60*60*1000,
+   })
 
-   return res.status(200).json({
-  msg: `Welcome back ${user.fullname}`,
-  user: {
-    fullname: user.fullname,
-    email: user.email,
-    isAdmin:user.isAdmin,
-    _id:user._id
-  },
-});
-
+    return res.status(200).json({
+      access_token: token,
+      user: {
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role,
+        _id: user._id,
+      },
+    });
   } catch (error) {
     res.status(500).json({ msg: "Internal server error" });
   }
 };
 
-module.exports = { register, login };
+// profile
+const getProfile = async (req, res) => {
+  res.status(200).json({ msg: `Welcome ${req.user.fullname}`, user: req.user });
+};
+
+// logout
+const Logout=async(req,res)=>{
+res.clearCookie("token"),{
+  httpOnly:true,
+  secure:false,
+}
+res.status(200).send("Logged out Successfully")
+}
+
+module.exports = { register, login, getProfile ,Logout};

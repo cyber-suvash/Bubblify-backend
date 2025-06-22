@@ -2,11 +2,12 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const methodOverride = require("method-override");
-
+const cookieParser=require('cookie-parser');
 const ConnectDB = require("./config/db");
 const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const imageRoutes = require("./routes/imageRoutes");
+
 require("dotenv").config(); // Make sure .env is loaded early
 
 const app = express();
@@ -31,18 +32,19 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(cookieParser());
+
 
 // 🛣️ API Routes
 app.get("/", (req, res) => {
   res.send("Welcome to Ecommerce server");
 });
 
-app.use("/api/products", productRoutes);
-app.use("/api/user", authRoutes);
+app.use("/api/products",productRoutes);
+app.use("/api/user",authRoutes);
 app.use("/api/images", imageRoutes);
 
 // 🚀 Start Server
