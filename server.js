@@ -24,6 +24,8 @@ app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/
 // 🛠 View Engine (Optional, mostly for testing server-rendered pages)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set("trust proxy", 1); // ✅ must be before any cookie-related middleware
+
 
 // 🧩 Middlewares
 app.use(cors({
