@@ -85,8 +85,8 @@ const getProfile = async (req, res) => {
 const Logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false, // ✅ use true in production with HTTPS
-    sameSite: "Strict", // optional, helps with CSRF
+    secure: true, // ✅ use true in production with HTTPS
+    sameSite: "None" // optional, helps with CSRF
   });
   
   res.status(200).json({ msg: "Logged out successfully" });
