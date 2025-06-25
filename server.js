@@ -17,14 +17,13 @@ const port = process.env.PORT || 4000;
 ConnectDB();
 
 // 📁 Static Files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
 app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
 
 // 🛠 View Engine (Optional, mostly for testing server-rendered pages)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.set("trust proxy", 1); // ✅ must be before any cookie-related middleware
 
 
 // 🧩 Middlewares
