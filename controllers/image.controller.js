@@ -1,5 +1,4 @@
 const ImageModel = require("../models/ImageModel");
-const fs = require("fs");
 const UserModel = require("../models/registerModel");
 const { cloudinary } = require("../cloud/cloudConfig");
 
@@ -18,7 +17,11 @@ const uploadImage = async (req, res) => {
       return res.status(404).json({ msg: "User not found!" });
     }
 
-    let updatedUser = existUser;
+    let updatedUser = null;
+
+    if (existUser.fullname === fullname) {
+      return res.status(409).json({ msg: "please chnage name or image" });
+    }
     //  update username
     if (existUser.fullname !== fullname) {
       updatedUser = await UserModel.findByIdAndUpdate(
@@ -46,24 +49,35 @@ const uploadImage = async (req, res) => {
       }
 
       // Save new image
-      const { path, filename } = req.file;
-      const img = { url: path, filename };
+      const imgURL = req.file.path;
+      const filename = req.file.filename;
+      const img = { url: imgURL, filename };
       newImg = new ImageModel({ userId, image: img });
       await newImg.save();
     }
-    return res
-      .status(200)
-      .json({ msg: "Profile update successfully", newImg, user: updatedUser });
+    return res.status(200).json({
+      msg: "Profile update successfully",
+      newImg,
+      user: {
+        fullname: updatedUser.fullname,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        _id: updatedUser._id,
+      },
+    });
   } catch (error) {
     console.error("Update error:", error); // Add error logging
     res.status(500).json({ msg: "Internal server error, please try again" });
   }
 };
 
-const ImageUploadforProducts=async(req,res)=>{
-
-
-}
+const ImageUploadforProducts = async (req, res) => {
+  if (req.file) {
+    const ImgURL = req.file.path;
+    const filename = req.file.filename;
+    res.status(200).json({url:ImgURL,filename});
+  }
+};
 
 const getImageByUser = async (req, res) => {
   try {
@@ -73,11 +87,11 @@ const getImageByUser = async (req, res) => {
     if (!imagefile) {
       return res.status(404).json({ msg: "No image found" });
     }
-    res.json({ data: imagefile });
+    res.status(200).json({ imagefile });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
 
-module.exports = { uploadImage,ImageUploadforProducts, getImageByUser };
+module.exports = { uploadImage, ImageUploadforProducts, getImageByUser };

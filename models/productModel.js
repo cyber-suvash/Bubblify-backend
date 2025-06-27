@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model, default: mongoose } = require("mongoose");
 
 const ProductSchema = new Schema({
   product_name: {
@@ -23,7 +23,8 @@ const ProductSchema = new Schema({
     require: true,
   },
   image: {
-    type: String,
+    url: { type: String },
+    filename: { type: String },
   },
   reviews: [
     {
@@ -31,6 +32,10 @@ const ProductSchema = new Schema({
       ref: "Review",
     },
   ],
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // ✅ This creates a relationship with the "User" model
+  },
   createdAt: {
     type: Date,
     default: Date.now,

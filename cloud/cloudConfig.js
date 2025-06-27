@@ -14,5 +14,12 @@ const storage = new CloudinaryStorage({
     allowedFormats:["png","jpg","jpeg"]
   },
 });
+const storage2 = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'Ecommerce/Products',
+    allowedFormats:["png","jpg","jpeg"]
+  },
+});
 
-module.exports={cloudinary,storage}
+module.exports={cloudinary,storage,storage2}

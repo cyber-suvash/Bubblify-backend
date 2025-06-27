@@ -3,11 +3,11 @@ const jwt = require("jsonwebtoken");
 const verifyAuthentication = async (req, res, next) => {
     const token = req.cookies.token;
   // const auth = req.headers["authorization"];
+  //   const token = auth.split(" ")[1];
   if (!token) {
     req.user = null;
     return res.status(401).json({ msg: "Access denied no token provided" });
   }
-  // const token = auth.split(" ")[1];
   try {
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decodeToken;

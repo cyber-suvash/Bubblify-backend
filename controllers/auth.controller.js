@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const register = async (req, res) => {
   try {
     const recData = req.body;
-    const {fullname, email, password, role, phone } = req.body;
+    const { fullname, email, password, role, phone } = req.body;
     console.log(recData);
     const userExists = await usermodel.findOne({ email });
     if (userExists) {
@@ -55,12 +55,12 @@ const login = async (req, res) => {
         expiresIn: "20h",
       }
     );
-   res.cookie("token",token,{
-    httpOnly:true,
-    secure:true,
-    sameSite:"None",
-    maxAge:20*60*60*1000,
-   })
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 20 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
       access_token: token,
@@ -78,7 +78,20 @@ const login = async (req, res) => {
 
 // profile
 const getProfile = async (req, res) => {
-  res.status(200).json({ msg: `Welcome ${req.user.fullname}`, user: req.user });
+  // res.status(200).json({ msg: `Welcome ${req.user.fullname}`, user: req.user });
+  try {
+    const userID = req.user?._id;
+    if (!userID) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+    const user = await usermodel.findById(userID);
+    if (!user) {
+      return res.status(400).json({ msg: "User not found" });
+    }
+    res.status(200).json({ msg: `Welcome ${user.fullname}`, user });
+  } catch (error) {
+    res.status(500).json({ msg: "Server error" });
+  }
 };
 
 // logout
@@ -86,11 +99,10 @@ const Logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: true, // ✅ use true in production with HTTPS
-    sameSite: "None" // optional, helps with CSRF
+    sameSite: "None", // optional, helps with CSRF
   });
-  
+
   res.status(200).json({ msg: "Logged out successfully" });
 };
 
-
-module.exports = { register, login, getProfile ,Logout};
+module.exports = { register, login, getProfile, Logout };

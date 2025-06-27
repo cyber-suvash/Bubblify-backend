@@ -1,8 +1,9 @@
+const { cloudinary } = require("../cloud/cloudConfig");
 const Product = require("../models/productModel");
 
 const getProducts = async (req, res) => {
   try {
-    const allProducts = await Product.find().populate('reviews');
+    const allProducts = await Product.find().populate("reviews");
     if (!allProducts || allProducts.length === 0) {
       return res
         .status(404)
@@ -21,7 +22,7 @@ const getOneProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ msg: "product not found" });
     }
-    res.status(200).json({product:product});
+    res.status(200).json({ product: product });
   } catch (error) {
     res.status(500).json({ msg: "server error" });
   }
@@ -38,6 +39,11 @@ const createProduct = async (req, res) => {
       image,
       rating,
     } = req.body;
+    const userId=req.user?._id;
+    if(!userId){
+      res.status(401).json({msg:"unauthorized no user id"})
+    }
+
     const n = await Product.create({
       product_name,
       category,
@@ -46,6 +52,7 @@ const createProduct = async (req, res) => {
       availability,
       image,
       rating,
+      userId
     });
     // newProduct is already saved—no need for newProduct.save()
     res.status(201).json({ msg: "product save successfully!" });
@@ -83,7 +90,6 @@ const editProduct = async (req, res) => {
       },
       { runValidators: true, new: true }
     );
-    console.log(updatedProduct);
     res.json({ msg: "Changes successful" });
     // res.redirect('/api/products')
   } catch (err) {
@@ -111,13 +117,22 @@ const openEdit = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedProduct = await Product.findByIdAndDelete(id);
-    if (!deletedProduct) {
+
+    const product = await Product.findById(id);
+    if (!product) {
       res.status(400).json({
         success: false,
         message: "Product not found, cannot delete",
       });
     }
+    const publicId = product.image.filename;
+    try {
+      await cloudinary.uploader.destroy(publicId);
+    } catch (error) {
+      console.log("Clodinary delete error", error);
+    }
+    await Product.deleteOne({ _id: id });
+    // const deletedProduct = await Product.findByIdAndDelete(id);
     res.status(200).json({ msg: "Successfully deleted" });
     // res.redirect('/api/products')
   } catch (error) {
