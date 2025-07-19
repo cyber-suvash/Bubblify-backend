@@ -5,12 +5,9 @@ const getProducts = async (req, res) => {
   try {
     const allProducts = await Product.find().populate("reviews");
     if (!allProducts || allProducts.length === 0) {
-      return res
-        .status(404)
-        .render("errProduct.ejs", { message: "No products available." });
+      return res.status(404).json({ msg: "No products available." });
     }
     res.status(200).json({ products: allProducts });
-    // res.render("home.ejs", { allProducts });
   } catch (error) {
     res.status(500).render("error.ejs", { message: "Internal server error" });
   }
@@ -30,38 +27,25 @@ const getOneProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const {
+    const { product_name, category, price, description, availability, image } =
+      req.body;
+    const userId = req.user?._id;
+    // if (!userId) {
+    //   res.status(401).json({ msg: "unauthorized no user id" });
+    // }
+    await Product.create({
       product_name,
       category,
       price,
       description,
       availability,
       image,
-      rating,
-    } = req.body;
-    const userId=req.user?._id;
-    if(!userId){
-      res.status(401).json({msg:"unauthorized no user id"})
-    }
-
-    const n = await Product.create({
-      product_name,
-      category,
-      price,
-      description,
-      availability,
-      image,
-      rating,
-      userId
+      userId,
     });
-    // newProduct is already saved—no need for newProduct.save()
+
     res.status(201).json({ msg: "product save successfully!" });
-    //   return res.status(201).redirect("/api/products");
   } catch (err) {
     console.error(err);
-    return res.status(500).render("error.ejs", {
-      message: "Cannot create product right now, please try later.",
-    });
   }
 };
 
@@ -91,7 +75,6 @@ const editProduct = async (req, res) => {
       { runValidators: true, new: true }
     );
     res.json({ msg: "Changes successful" });
-    // res.redirect('/api/products')
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -100,15 +83,12 @@ const editProduct = async (req, res) => {
   }
 };
 
-const openForm = (req, res) => {
-  // res.render("create.ejs");
-};
+const openForm = (req, res) => {};
 const openEdit = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findById(id);
     // res.status(200).json({msg:'found product'},product)
-    // res.render('edit.ejs',{product})
   } catch (err) {
     res.status(500).render("error.ejs", err);
   }
@@ -117,7 +97,6 @@ const openEdit = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-
     const product = await Product.findById(id);
     if (!product) {
       res.status(400).json({
@@ -132,9 +111,7 @@ const deleteProduct = async (req, res) => {
       console.log("Clodinary delete error", error);
     }
     await Product.deleteOne({ _id: id });
-    // const deletedProduct = await Product.findByIdAndDelete(id);
     res.status(200).json({ msg: "Successfully deleted" });
-    // res.redirect('/api/products')
   } catch (error) {
     res.status(500).json({
       success: false,

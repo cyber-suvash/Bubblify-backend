@@ -52,14 +52,14 @@ const login = async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "20h",
+        expiresIn: "15h",
       }
     );
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: 20 * 60 * 60 * 1000,
+      maxAge: 15 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
@@ -78,7 +78,6 @@ const login = async (req, res) => {
 
 // profile
 const getProfile = async (req, res) => {
-  // res.status(200).json({ msg: `Welcome ${req.user.fullname}`, user: req.user });
   try {
     const userID = req.user?._id;
     if (!userID) {
@@ -88,7 +87,15 @@ const getProfile = async (req, res) => {
     if (!user) {
       return res.status(400).json({ msg: "User not found" });
     }
-    res.status(200).json({ msg: `Welcome ${user.fullname}`, user });
+    res.status(200).json({
+      msg: `Welcome ${user.fullname}`,
+      user: {
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role,
+        _id: user._id,
+      },
+    });
   } catch (error) {
     res.status(500).json({ msg: "Server error" });
   }

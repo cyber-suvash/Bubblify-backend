@@ -10,32 +10,10 @@ const uploadImage = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ msg: "User id is required" });
     }
-    // check exist user
-    const existUser = await UserModel.findById(userId);
-
-    if (!existUser) {
-      return res.status(404).json({ msg: "User not found!" });
-    }
-
-    let updatedUser = null;
-
-    if (existUser.fullname === fullname) {
-      return res.status(409).json({ msg: "please chnage name or image" });
-    }
-    //  update username
-    if (existUser.fullname !== fullname) {
-      updatedUser = await UserModel.findByIdAndUpdate(
-        userId,
-        { fullname },
-        { runValidators: true, new: true }
-      );
-    }
-
     let newImg = null;
     if (req.file) {
       // check existing image
       const existing = await ImageModel.findOne({ userId });
-
       if (existing) {
         // Delete the old image from Cloudinary using its public_id
         const publicId = existing.image.filename;
@@ -55,6 +33,22 @@ const uploadImage = async (req, res) => {
       newImg = new ImageModel({ userId, image: img });
       await newImg.save();
     }
+    // check exist user
+    const existUser = await UserModel.findById(userId);
+
+    if (!existUser) {
+      return res.status(404).json({ msg: "User not found!" });
+    }
+    // if (existUser.fullname === fullname) {
+    //   return res.status(409).json({ msg: "please chnage name or image" });
+    // }
+    //  update username
+    let updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { fullname },
+      { runValidators: true, new: true }
+    );
+
     return res.status(200).json({
       msg: "Profile update successfully",
       newImg,
@@ -66,7 +60,7 @@ const uploadImage = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Update error:", error); // Add error logging
+    console.error("Update error:", error);
     res.status(500).json({ msg: "Internal server error, please try again" });
   }
 };
@@ -75,7 +69,7 @@ const ImageUploadforProducts = async (req, res) => {
   if (req.file) {
     const ImgURL = req.file.path;
     const filename = req.file.filename;
-    res.status(200).json({url:ImgURL,filename});
+    res.status(200).json({ url: ImgURL, filename });
   }
 };
 

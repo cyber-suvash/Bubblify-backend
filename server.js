@@ -8,6 +8,7 @@ const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const imageRoutes = require("./routes/imageRoutes");
 
+
 require("dotenv").config(); // Make sure .env is loaded early
 
 const app = express();
