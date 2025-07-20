@@ -29,7 +29,7 @@ const createProduct = async (req, res) => {
   try {
     const { product_name, category, price, description, availability, image } =
       req.body;
-    const userId = req.user?._id;
+    //   const userId=req.user?._id;
     // if (!userId) {
     //   res.status(401).json({ msg: "unauthorized no user id" });
     // }
@@ -40,7 +40,6 @@ const createProduct = async (req, res) => {
       description,
       availability,
       image,
-      userId,
     });
 
     res.status(201).json({ msg: "product save successfully!" });
