@@ -29,10 +29,10 @@ const createProduct = async (req, res) => {
   try {
     const { product_name, category, price, description, availability, image } =
       req.body;
-    //   const userId=req.user?._id;
-    // if (!userId) {
-    //   res.status(401).json({ msg: "unauthorized no user id" });
-    // }
+      const userid=req.user?._id;
+    if (!userid) {
+      res.status(401).json({ msg: "unauthorized no user id" });
+    }
     await Product.create({
       product_name,
       category,
@@ -40,6 +40,7 @@ const createProduct = async (req, res) => {
       description,
       availability,
       image,
+      userid
     });
 
     res.status(201).json({ msg: "product save successfully!" });

@@ -28,6 +28,7 @@ const register = async (req, res) => {
 };
 
 // login
+const isProd = process.env.NODE_ENV === "production";
 
 const login = async (req, res) => {
   try {
@@ -55,11 +56,12 @@ const login = async (req, res) => {
         expiresIn: "15h",
       }
     );
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      maxAge: 15 * 60 * 60 * 1000,
+      secure: isProd, // false on localhost (HTTP)
+      sameSite: isProd ? "None" : "Lax", // "Lax" works without HTTPS
+      maxAge: 15 * 60 * 60 * 1000, // 15 hours
     });
 
     return res.status(200).json({
@@ -105,8 +107,8 @@ const getProfile = async (req, res) => {
 const Logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true, // ✅ use true in production with HTTPS
-    sameSite: "None", // optional, helps with CSRF
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
   });
 
   res.status(200).json({ msg: "Logged out successfully" });

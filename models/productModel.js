@@ -31,7 +31,7 @@ const ProductSchema = new Schema({
       ref: "Review",
     },
   ],
-  userId: {
+  userid: {
     type: Schema.Types.ObjectId,
     ref:"User"
   },
